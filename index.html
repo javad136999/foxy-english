@@ -108,7 +108,7 @@ const sh=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.r
 function say(t){try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);u.lang='en-US';u.rate=.8;speechSynthesis.speak(u)}catch(e){}}
 let AC;function beep(f,d=.15){try{AC=AC||new(window.AudioContext||window.webkitAudioContext)();const o=AC.createOscillator(),g=AC.createGain();o.frequency.value=f;o.type='triangle';g.gain.value=.12;o.connect(g);g.connect(AC.destination);o.start();o.stop(AC.currentTime+d)}catch(e){}}
 function confetti(){for(let i=0;i<22;i++){const s=document.createElement('span');s.className='cf';s.textContent=['⭐','🎉','✨','🎈','💛'][i%5];s.style.left=Math.random()*95+'%';s.style.animationDelay=Math.random()*.5+'s';document.body.appendChild(s);setTimeout(()=>s.remove(),2400)}}
-const top=(f,l)=>`<div class="top"><button class="pill" onclick="${f}">${l}</button><span class="pill">🔥 ${P.streak}</span><span class="pill">⭐ ${P.stars}</span></div>`;
+const topbar=(f,l)=>`<div class="top"><button class="pill" onclick="${f}">${l}</button><span class="pill">🔥 ${P.streak}</span><span class="pill">⭐ ${P.stars}</span></div>`;
 function ov(h){cov();const d=document.createElement('div');d.id='ov';d.innerHTML='<div>'+h+'</div>';document.body.appendChild(d)}
 function cov(){const o=document.getElementById('ov');if(o)o.remove()}
 // ===== والدین، پرداخت، تبلیغ =====
@@ -123,11 +123,11 @@ function ages(){document.body.dataset.age='';const D={a:['#ffe08a','شنیدن �
 app.innerHTML=`<div class="fox">🦊</div><h1>سلام! من فاکسی‌ام</h1><p>سن کودک را انتخاب کنید</p>`+Object.keys(AG).map(k=>`<button class="sticker age" style="--c:${D[k][0]}" onclick="setAge('${k}')"><span class="ab">${AG[k].e}</span><span>${AG[k].t}<small>${D[k][1]}</small></span></button>`).join('')+`<p><a href="/privacy.html" onclick="event.preventDefault();gate(()=>location.href='/privacy.html')" style="color:inherit">حریم خصوصی (ویژه والدین)</a></p>`}
 function setAge(k){P.age=k;save();cats()}
 function cats(){if(!P.age)return ages();document.body.dataset.age=P.age;const A=AG[P.age];
-app.innerHTML=top('ages()','🔁 سن')+`<h1>${A.e} ${A.t}</h1><p>یک دسته انتخاب کن</p><div class="g2">`+A.c.map((id,i)=>{const c=CM[id],lk=!P.premium&&i>=FREE;return `<button class="sticker cat" style="background:${c.c};color:#2a2347" onclick="${lk?'gate(paywall)':`games('${id}')`}"><b>${c.e}</b>${c.n}${lk?'<i>🔒</i>':''}</button>`}).join('')+'</div>'}
-function games(id){const c=CM[id];app.innerHTML=top('cats()','→ دسته‌ها')+`<div class="big">${c.e}</div><h1>${c.n}</h1>`+AG[P.age].g.map(g=>{const b=P.best[id+g]||0;return `<button class="sticker" onclick="start('${id}','${g}')">${GN[g][0]} ${GN[g][1]}<small>${'⭐'.repeat(b)||'هنوز بازی نشده'}</small></button>`}).join('')}
+app.innerHTML=topbar('ages()','🔁 سن')+`<h1>${A.e} ${A.t}</h1><p>یک دسته انتخاب کن</p><div class="g2">`+A.c.map((id,i)=>{const c=CM[id],lk=!P.premium&&i>=FREE;return `<button class="sticker cat" style="background:${c.c};color:#2a2347" onclick="${lk?'gate(paywall)':`games('${id}')`}"><b>${c.e}</b>${c.n}${lk?'<i>🔒</i>':''}</button>`}).join('')+'</div>'}
+function games(id){const c=CM[id];app.innerHTML=topbar('cats()','→ دسته‌ها')+`<div class="big">${c.e}</div><h1>${c.n}</h1>`+AG[P.age].g.map(g=>{const b=P.best[id+g]||0;return `<button class="sticker" onclick="start('${id}','${g}')">${GN[g][0]} ${GN[g][1]}<small>${'⭐'.repeat(b)||'هنوز بازی نشده'}</small></button>`}).join('')}
 function start(cat,mode){R={cat,mode,i:0,s:0,f:0};if(mode==='match')return match();R.q=sh(CM[cat].w).slice(0,8);ask()}
 const opts=(it,n)=>sh([...sh(CM[R.cat].w.filter(x=>x!==it)).slice(0,n-1),it]);
-function head(){return top(`games('${R.cat}')`,'→ بازی‌ها')+`<div class="bar"><i style="width:${R.i/R.q.length*100}%"></i></div>`}
+function head(){return topbar(`games('${R.cat}')`,'→ بازی‌ها')+`<div class="bar"><i style="width:${R.i/R.q.length*100}%"></i></div>`}
 function ask(){if(R.i>=R.q.length)return fin(R.s/R.q.length>=.9?3:R.s/R.q.length>=.6?2:1);
 const it=R.q[R.i],m=R.mode;R.f=0;let o,h=head();
 if(m==='listen'){o=opts(it,3);app.innerHTML=h+`<p>گوش بده و تصویر درست را بزن</p><button class="say" id="sp">🔊 دوباره</button><div class="g3">${o.map((x,i)=>`<button class="opt emo" data-i="${i}">${x.e}</button>`).join('')}</div>`;setTimeout(()=>say(it.w),250)}
@@ -141,14 +141,14 @@ document.getElementById('sp').onclick=()=>say(it.w);
 app.querySelectorAll('.opt').forEach(b=>b.onclick=()=>{if(o[b.dataset.i]===it){b.classList.add('ok');app.querySelectorAll('.opt').forEach(x=>x.disabled=true);if(!R.f)R.s++;win(it)}else{R.f=1;b.classList.add('bad');beep(180);setTimeout(()=>b.classList.remove('bad'),400)}})}
 function win(it){beep(880);say(it.w);R.i++;setTimeout(ask,950)}
 function match(){const its=sh(CM[R.cat].w).slice(0,6);let open=[],mv=0,dn=0,lk=false;
-app.innerHTML=top(`games('${R.cat}')`,'→ بازی‌ها')+`<p>هر تصویر را با کلمه‌اش جفت کن</p><div class="g3" id="mg"></div>`;const g=document.getElementById('mg');
+app.innerHTML=topbar(`games('${R.cat}')`,'→ بازی‌ها')+`<p>هر تصویر را با کلمه‌اش جفت کن</p><div class="g3" id="mg"></div>`;const g=document.getElementById('mg');
 sh(its.flatMap((x,i)=>[{i,e:1},{i,e:0}])).forEach(c=>{const b=document.createElement('button');b.className='card';b.textContent='❓';
 b.onclick=()=>{if(lk||b.classList.contains('up'))return;b.classList.add('up');b.textContent=c.e?its[c.i].e:its[c.i].w;if(c.e)b.style.fontSize='44px';else say(its[c.i].w);open.push([c,b]);
 if(open.length===2){mv++;lk=true;const[[x,bx],[y,by]]=open;open=[];
 if(x.i===y.i){beep(880);dn++;bx.classList.add('ok');by.classList.add('ok');lk=false;if(dn===6)setTimeout(()=>fin(mv<=8?3:mv<=12?2:1),700)}
 else setTimeout(()=>{[bx,by].forEach(z=>{z.classList.remove('up');z.textContent='❓';z.style.fontSize=''});lk=false},850)}};g.appendChild(b)})}
 function fin(st){const k=R.cat+R.mode;P.best[k]=Math.max(P.best[k]||0,st);P.stars+=st;P.rounds++;save();confetti();beep(1000,.3);
-app.innerHTML=top(`games('${R.cat}')`,'→ بازی‌ها')+`<div class="fox">🦊</div><h1>${OK[Math.floor(Math.random()*OK.length)]}</h1><div class="stars">${'⭐'.repeat(st)}</div><button class="sticker" onclick="start('${R.cat}','${R.mode}')">🔁 دوباره</button><button class="sticker" onclick="cats()">🏠 دسته‌ها</button>`;
+app.innerHTML=topbar(`games('${R.cat}')`,'→ بازی‌ها')+`<div class="fox">🦊</div><h1>${OK[Math.floor(Math.random()*OK.length)]}</h1><div class="stars">${'⭐'.repeat(st)}</div><button class="sticker" onclick="start('${R.cat}','${R.mode}')">🔁 دوباره</button><button class="sticker" onclick="cats()">🏠 دسته‌ها</button>`;
 if(!P.premium&&P.rounds%3===0)setTimeout(showAd,1200)}
 if('serviceWorker' in navigator)navigator.serviceWorker.register('/sw.js').catch(()=>{});
 cats();
