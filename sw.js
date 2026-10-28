@@ -1,4 +1,4 @@
-const V='fox-v4';
+const V='fox-v5';
 const BASE=self.registration.scope;
 const A=[BASE,BASE+'index.html',BASE+'manifest.webmanifest',BASE+'icons/icon-192.png',BASE+'icons/icon-512.png',BASE+'assets/foxy-mascot-refined.png',BASE+'assets/category-animals.png',BASE+'assets/category-fruits.png',BASE+'assets/category-food.png',BASE+'assets/category-vehicles.png',BASE+'assets/category-nature.png',BASE+'assets/items/dog.png',BASE+'assets/items/cat.png',BASE+'assets/items/fish.png',BASE+'assets/items/bird.png',BASE+'assets/items/cow.png',BASE+'assets/items/horse.png',BASE+'assets/items/elephant.png',BASE+'assets/items/monkey.png',BASE+'assets/items/rabbit.png',BASE+'assets/items/apple.png',BASE+'assets/items/banana.png',BASE+'assets/items/grapes.png',BASE+'assets/items/orange.png',BASE+'assets/items/watermelon.png'];
 self.addEventListener('install',e=>e.waitUntil(caches.open(V).then(c=>c.addAll(A)).then(()=>self.skipWaiting())));
