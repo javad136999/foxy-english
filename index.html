@@ -131,6 +131,7 @@ body{background:radial-gradient(circle at 50% -8%,rgba(255,255,255,.98) 0 18%,tr
 .card{background:linear-gradient(145deg,#9790f6,#6861d1)}.card.up{background:linear-gradient(145deg,#fff,#f4f8fb)}.card.ok{background:linear-gradient(145deg,#46cf9b,#27b980);animation:correct-pop .42s}
 .stars{filter:drop-shadow(0 5px 8px rgba(255,188,67,.25));animation:stars-in .5s cubic-bezier(.2,.8,.25,1)}@keyframes stars-in{from{opacity:0;transform:scale(.7) translateY(8px)}to{opacity:1;transform:none}}
 .age-intro{background:rgba(255,255,255,.82);border-color:rgba(255,255,255,.95)}
+.price-tag{display:inline-block;margin:4px 0 12px;padding:8px 13px;border:1px solid #ffe1bd;border-radius:99px;background:#fff8ed;color:#bd6a2f;font-size:14px;font-weight:900}
 @media(max-width:390px){.welcome-scene{min-height:228px}.fox-art-wrap{height:214px}.cat{min-height:128px}}
 @media(prefers-reduced-motion:reduce){.fox-art,.big,.stars,.opt.ok,.card.ok{animation:none!important}.sticker,.opt,.card{transition:none!important}}
 
@@ -172,10 +173,11 @@ const AG={a:{t:'۴ تا ۵ سال',e:'🐣',c:['animals','fruits','colors','numb
 b:{t:'۶ تا ۷ سال',e:'🚀',c:['animals','fruits','numbers','body','food','vehicles','nature','family','clothes','toys','shapes','sea','insects','veggies','sports','feelings','kitchen'],g:['pick','listen','match']},
 c:{t:'۸ تا ۱۰ سال',e:'🏆',c:['body','food','vehicles','school','nature','home','jobs','family','sea','insects','veggies','sports','places','tech','feelings','kitchen'],g:['spell','trans','pick']}};
 const GN={listen:['🔊','بشنو و تصویر را بزن'],pick:['👀','کلمه را پیدا کن'],spell:['🔤','املای کلمه'],trans:['🇮🇷','معنی فارسی'],match:['🃏','بازی حافظه']};
-const FREE=2,OK=['آفرین!','عالی بود!','دمت گرم!','خفن!','درسته!'];
+const FREE=2,PRICE_TOMAN=200000,PRODUCT_ID='foxy_lifetime',OK=['آفرین!','عالی بود!','دمت گرم!','خفن!','درسته!'];
 // ===== وضعیت =====
 let P={id:Math.random().toString(36).slice(2),age:null,stars:0,streak:0,last:'',premium:false,best:{},rounds:0},R={},GCB;
 try{Object.assign(P,JSON.parse(localStorage.getItem('kea1')||'{}'))}catch(e){}
+if(P.premiumSource!=='bazaar')P.premium=false;
 function save(){try{localStorage.setItem('kea1',JSON.stringify(P))}catch(e){}sync()}
 function sync(){if(!SB_URL)return;fetch(SB_URL+'/rest/v1/progress?on_conflict=device_id',{method:'POST',headers:{apikey:SB_KEY,Authorization:'Bearer '+SB_KEY,'Content-Type':'application/json',Prefer:'resolution=merge-duplicates'},body:JSON.stringify({device_id:P.id,data:P,updated_at:new Date().toISOString()})}).catch(()=>{})}
 (function(){const d=new Date().toDateString();if(P.last!==d){P.streak=P.last===new Date(Date.now()-864e5).toDateString()?P.streak+1:1;P.last=d;save()}})();
@@ -201,8 +203,19 @@ function cov(){const o=document.getElementById('ov');if(o)o.remove()}
 function gate(cb){const a=2+Math.floor(Math.random()*7),b=2+Math.floor(Math.random()*7),r=a*b;GCB=cb;
 ov(`<h2>🔒 فقط برای والدین</h2><p>برای ادامه جواب را بزنید:</p><h1>${a} × ${b} = ؟</h1><div class="row">${sh([r,r+4,r-3]).map(x=>`<button class="opt" onclick="gk(${x===r})">${x}</button>`).join('')}</div><button class="pill" onclick="cov()">انصراف</button>`)}
 function gk(ok){cov();if(ok)GCB();else beep(180)}
-function paywall(){ov(`<div class="fox">🦊</div><h2>نسخه کامل فاکسی</h2><p>همه دسته‌ها و بدون تبلیغ</p><button class="sticker" onclick="buy()">فعال‌سازی نسخه کامل</button><button class="pill" onclick="cov()">بعداً</button>`)}
-function buy(){ /* TODO: اتصال به پرداخت درون‌برنامه‌ای کافه‌بازار/مایکت */ P.premium=true;save();cov();cats()}
+function paywall(){ov(`<div class="fox">🦊</div><h2>نسخه کامل فاکسی</h2><p>دو دسته اول رایگان‌اند؛ با خرید مادام‌العمر همه دسته‌ها و بازی‌ها باز می‌شوند.</p><div class="price-tag">۲۰۰٬۰۰۰ تومان · فعال‌سازی مادام‌العمر</div><button class="sticker" onclick="buy()">خرید اشتراک از بازار</button><button class="pill" onclick="cov()">بعداً</button>`)}
+function buy(){
+ cov();
+ const bridge=window.FoxyBazaar||window.Android;
+ if(bridge&&typeof bridge.purchase==='function'){
+  try{bridge.purchase(PRODUCT_ID,String(PRICE_TOMAN));return}catch(e){}
+ }
+ ov(`<div class="fox">🦊</div><h2>نسخه بازار لازم است</h2><p>خرید واقعی فقط داخل نسخه اندرویدی منتشرشده در کافه‌بازار انجام می‌شود. نسخه وب فعلاً فقط دو دسته اول را رایگان اجرا می‌کند.</p><button class="pill" onclick="cov()">باشه</button>`)
+}
+window.foxyPurchaseComplete=function(result){
+ if(!result||result.productId!==PRODUCT_ID||!result.purchaseToken)return false;
+ P.premium=true;P.premiumSource='bazaar';P.premiumAt=Date.now();save();cov();cats();return true
+};
 function showAd(){let n=3;ov(`<p>تبلیغ</p><div class="big">📣</div><p>اینجا SDK تبلیغ کودک‌محور قرار می‌گیرد</p><button class="pill" id="sk" disabled>${n}</button>`);const b=document.getElementById('sk'),t=setInterval(()=>{n--;if(n<=0){clearInterval(t);b.disabled=false;b.textContent='بستن ✖';b.onclick=cov}else b.textContent=n},1000)}
 // ===== صفحه‌ها =====
 function playfulFox(){const wrap=document.getElementById('foxArtWrap');if(!wrap)return;wrap.classList.remove('spin');void wrap.offsetWidth;wrap.classList.add('spin');setTimeout(()=>wrap.classList.remove('spin'),850)}
