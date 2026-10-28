@@ -196,7 +196,17 @@ function sync(){if(!SB_URL)return;fetch(SB_URL+'/rest/v1/progress?on_conflict=de
 // ===== ابزار =====
 const app=document.getElementById('app');
 const sh=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
-	function say(t){try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);u.lang='en-US';u.rate=.8;speechSynthesis.speak(u)}catch(e){}}
+	let speechVoices=[];
+	function refreshSpeechVoices(){try{speechVoices=window.speechSynthesis.getVoices()||[]}catch(e){speechVoices=[]}return speechVoices}
+	if('speechSynthesis' in window)window.speechSynthesis.onvoiceschanged=refreshSpeechVoices;
+	function say(t){
+	 try{
+	  if(!('speechSynthesis' in window)||typeof SpeechSynthesisUtterance==='undefined')return false;
+	  const speak=()=>{const voices=refreshSpeechVoices(),u=new SpeechSynthesisUtterance(String(t));u.lang='en-US';u.rate=.8;u.volume=1;const v=voices.find(x=>/^en([_-]|$)/i.test(x.lang))||voices.find(x=>/^en-US$/i.test(x.lang));if(v)u.voice=v;window.speechSynthesis.cancel();window.speechSynthesis.resume();window.speechSynthesis.speak(u)};
+	  if(refreshSpeechVoices().length)speak();else setTimeout(speak,180);
+	  return true
+	 }catch(e){return false}
+	}
 	const FOX_AUDIO={welcome:'./assets/audio/foxy-welcome.wav',correct:'./assets/audio/foxy-correct.wav',tryAgain:'./assets/audio/foxy-try-again.wav',choose:'./assets/audio/foxy-choose-category.wav',locked:'./assets/audio/foxy-locked.wav'};let foxAudio;
 	function playFoxyAudio(key,fallback,onDone){try{if(foxAudio){foxAudio.pause();foxAudio.currentTime=0}const wrap=document.getElementById('foxArtWrap');if(wrap)wrap.classList.add('talking');const a=new Audio(FOX_AUDIO[key]);foxAudio=a;a.onended=()=>{if(wrap)wrap.classList.remove('talking');if(onDone)onDone()};a.onerror=()=>{if(wrap)wrap.classList.remove('talking');if(fallback)fallback()};const p=a.play();if(p&&p.catch)p.catch(()=>{if(wrap)wrap.classList.remove('talking');if(fallback)fallback()});return true}catch(e){if(fallback)fallback();return false}}
 const WELCOME_TEXT='سلام سلام قهرمان! من فاکسی‌یارم. دست تکون می‌دم و دمم رو تکون می‌دم تا با هم انگلیسی یاد بگیریم. آماده‌ای؟ بزن بریم!';

@@ -1,4 +1,4 @@
-const V='fox-v7';
+const V='fox-v8';
 const BASE=self.registration.scope;
 const A=[BASE,BASE+'index.html',BASE+'manifest.webmanifest',BASE+'icons/icon-192.png',BASE+'icons/icon-512.png',BASE+'assets/foxy-mascot-refined.webp',BASE+'assets/category-animals.webp',BASE+'assets/category-fruits.webp',BASE+'assets/category-food.webp',BASE+'assets/category-vehicles.webp',BASE+'assets/category-nature.webp',BASE+'assets/items/dog.webp',BASE+'assets/items/cat.webp',BASE+'assets/items/fish.webp',BASE+'assets/items/bird.webp',BASE+'assets/items/cow.webp',BASE+'assets/items/horse.webp',BASE+'assets/items/elephant.webp',BASE+'assets/items/monkey.webp',BASE+'assets/items/rabbit.webp',BASE+'assets/items/apple.webp',BASE+'assets/items/banana.webp',BASE+'assets/items/grapes.webp',BASE+'assets/items/orange.webp',BASE+'assets/items/watermelon.webp',BASE+'assets/audio/foxy-welcome.wav',BASE+'assets/audio/foxy-correct.wav',BASE+'assets/audio/foxy-try-again.wav',BASE+'assets/audio/foxy-choose-category.wav',BASE+'assets/audio/foxy-locked.wav'];
 self.addEventListener('install',e=>e.waitUntil(caches.open(V).then(c=>c.addAll(A)).then(()=>self.skipWaiting())));
