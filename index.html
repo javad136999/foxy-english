@@ -46,6 +46,7 @@ button{font:inherit;color:inherit;cursor:pointer;border:0}
 .opt.ok{background:var(--ok);color:#fff}.opt.bad{background:var(--bad);color:#fff;animation:shk .35s}
 @keyframes shk{25%{transform:translateX(-9px)}75%{transform:translateX(9px)}}
 .big{font-size:108px;line-height:1.1;margin:4px 0;filter:drop-shadow(0 10px 8px var(--glow))}.en{font-size:46px;font-weight:900;direction:ltr;margin:10px 0}
+.item-art{display:inline-flex;position:relative;align-items:center;justify-content:center;width:1.15em;height:1.15em;vertical-align:middle}.item-art img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;filter:drop-shadow(0 7px 5px rgba(51,78,82,.16))}.item-fallback{line-height:1}.hero-art{width:1.05em;height:1.05em}.category-hero{width:120px;height:120px;object-fit:contain;filter:drop-shadow(0 12px 10px rgba(66,95,98,.13))}.card-art{width:1.2em;height:1.2em}
 .say{background:var(--vio);color:#fff;border-radius:99px;padding:10px 24px;font-size:18px;font-weight:800;box-shadow:0 5px 0 rgba(0,0,0,.18);margin:6px 0 16px}
 .bar{height:16px;border-radius:9px;background:var(--edge);overflow:hidden;margin-bottom:14px}.bar i{display:block;height:100%;border-radius:9px;background:linear-gradient(90deg,var(--pri),var(--acc));transition:width .35s}
 .slots,.tiles{display:flex;gap:9px;justify-content:center;flex-wrap:wrap;direction:ltr;margin:14px 0}
@@ -176,10 +177,12 @@ CL.push(
 {id:'tech',n:'وسایل برقی',e:'💻',c:'#c7ceea',w:T('📱 phone تلفن‌همراه,💻 laptop لپ‌تاپ,📷 camera دوربین,⏰ clock ساعت,🎧 headphones هدفون,🖥️ computer رایانه,⌚ watch ساعت‌مچی,🔋 battery باتری')});
 const CM={};CL.forEach(c=>CM[c.id]=c);
 const CAT_IMG={animals:'./assets/category-animals.png',fruits:'./assets/category-fruits.png',food:'./assets/category-food.png',vehicles:'./assets/category-vehicles.png',nature:'./assets/category-nature.png'};Object.keys(CAT_IMG).forEach(id=>{if(CM[id])CM[id].img=CAT_IMG[id]});
-const AG={a:{t:'۴ تا ۵ سال',e:'🐣',c:['animals','fruits','colors','numbers','family','clothes','toys','shapes','sea','veggies'],g:['listen','match']},
-b:{t:'۶ تا ۷ سال',e:'🚀',c:['animals','fruits','numbers','body','food','vehicles','nature','family','clothes','toys','shapes','sea','insects','veggies','sports','feelings','kitchen'],g:['pick','listen','match']},
-c:{t:'۸ تا ۱۰ سال',e:'🏆',c:['body','food','vehicles','school','nature','home','jobs','family','sea','insects','veggies','sports','places','tech','feelings','kitchen'],g:['spell','trans','pick']}};
-const GN={listen:['🔊','بشنو و تصویر را بزن'],pick:['👀','کلمه را پیدا کن'],spell:['🔤','املای کلمه'],trans:['🇮🇷','معنی فارسی'],match:['🃏','بازی حافظه']};
+const ITEM_IMG={dog:'./assets/items/dog.png',cat:'./assets/items/cat.png',fish:'./assets/items/fish.png',bird:'./assets/items/bird.png',cow:'./assets/items/cow.png',horse:'./assets/items/horse.png',elephant:'./assets/items/elephant.png',lion:'./assets/items/lion.png',monkey:'./assets/items/monkey.png',rabbit:'./assets/items/rabbit.png',apple:'./assets/items/apple.png',banana:'./assets/items/banana.png',grapes:'./assets/items/grapes.png',orange:'./assets/items/orange.png',watermelon:'./assets/items/watermelon.png',strawberry:'./assets/items/strawberry.png',pear:'./assets/items/pear.png',cherry:'./assets/items/cherry.png'};CL.forEach(c=>c.w.forEach(x=>{if(ITEM_IMG[x.w])x.img=ITEM_IMG[x.w]}));
+function art(x,cls=''){return `<span class="item-art ${cls}"><span class="item-fallback">${x.e}</span>${x.img?`<img src="${x.img}" alt="" loading="lazy" onload="this.previousElementSibling.style.display='none'" onerror="this.remove()">`:''}</span>`}
+const AG={a:{t:'۴ تا ۵ سال',e:'🐣',c:['animals','fruits','colors','numbers','family','clothes','toys','shapes','sea','veggies'],g:['listen','match','truth']},
+b:{t:'۶ تا ۷ سال',e:'🚀',c:['animals','fruits','numbers','body','food','vehicles','nature','family','clothes','toys','shapes','sea','insects','veggies','sports','feelings','kitchen'],g:['pick','listen','match','truth']},
+c:{t:'۸ تا ۱۰ سال',e:'🏆',c:['body','food','vehicles','school','nature','home','jobs','family','sea','insects','veggies','sports','places','tech','feelings','kitchen'],g:['spell','trans','pick','truth']}};
+const GN={listen:['🔊','بشنو و تصویر را بزن'],pick:['👀','کلمه را پیدا کن'],spell:['🔤','املای کلمه'],trans:['🇮🇷','معنی فارسی'],match:['🃏','بازی حافظه'],truth:['✅','درست یا غلط']};
 const FREE=2,PRICE_TOMAN=200000,PRODUCT_ID='foxy_lifetime',OK=['آفرین!','عالی بود!','دمت گرم!','خفن!','درسته!'];
 // ===== وضعیت =====
 let P={id:Math.random().toString(36).slice(2),age:null,stars:0,streak:0,last:'',premium:false,best:{},rounds:0},R={},GCB;
@@ -244,16 +247,17 @@ app.innerHTML=`<button class="pill" onclick="welcome()">← برگشت به فا
 function setAge(k){P.age=k;save();cats()}
 function cats(){if(!P.age)return ages();document.body.dataset.age=P.age;const A=AG[P.age];
 app.innerHTML=topbar('ages()','🔁 سن')+`<h1>${A.e} ${A.t}</h1><p>یک دسته انتخاب کن</p><div class="g2">`+A.c.map((id,i)=>{const c=CM[id],lk=!P.premium&&i>=FREE;return `<button class="sticker cat" style="background:${c.c};color:#2a2347" onclick="${lk?'gate(paywall)':`games('${id}')`}"><b>${c.img?`<img src="${c.img}" alt="" loading="lazy">`:c.e}</b>${c.n}${lk?'<i>🔒</i>':''}</button>`}).join('')+'</div>'}
-function games(id){const c=CM[id];app.innerHTML=topbar('cats()','→ دسته‌ها')+`<div class="big">${c.e}</div><h1>${c.n}</h1>`+AG[P.age].g.map(g=>{const b=P.best[id+g]||0;return `<button class="sticker" onclick="start('${id}','${g}')">${GN[g][0]} ${GN[g][1]}<small>${'⭐'.repeat(b)||'هنوز بازی نشده'}</small></button>`}).join('')}
+function games(id){const c=CM[id];app.innerHTML=topbar('cats()','→ دسته‌ها')+`<div class="big">${c.img?`<img class="category-hero" src="${c.img}" alt="">`:c.e}</div><h1>${c.n}</h1>`+AG[P.age].g.map(g=>{const b=P.best[id+g]||0;return `<button class="sticker" onclick="start('${id}','${g}')">${GN[g][0]} ${GN[g][1]}<small>${'⭐'.repeat(b)||'هنوز بازی نشده'}</small></button>`}).join('')}
 function start(cat,mode){R={cat,mode,i:0,s:0,f:0};if(mode==='match')return match();R.q=sh(CM[cat].w).slice(0,8);ask()}
 const opts=(it,n)=>sh([...sh(CM[R.cat].w.filter(x=>x!==it)).slice(0,n-1),it]);
 function head(){return topbar(`games('${R.cat}')`,'→ بازی‌ها')+`<div class="bar"><i style="width:${R.i/R.q.length*100}%"></i></div>`}
 function ask(){if(R.i>=R.q.length)return fin(R.s/R.q.length>=.9?3:R.s/R.q.length>=.6?2:1);
 const it=R.q[R.i],m=R.mode;R.f=0;let o,h=head();
-if(m==='listen'){o=opts(it,3);app.innerHTML=h+`<p>گوش بده و تصویر درست را بزن</p><button class="say" id="sp">🔊 دوباره</button><div class="g3">${o.map((x,i)=>`<button class="opt emo" data-i="${i}">${x.e}</button>`).join('')}</div>`;setTimeout(()=>say(it.w),250)}
-else if(m==='pick'){o=opts(it,4);app.innerHTML=h+`<div class="big">${it.e}</div><button class="say" id="sp">🔊 تلفظ</button><div class="g2">${o.map((x,i)=>`<button class="opt" data-i="${i}">${x.w}</button>`).join('')}</div>`}
+if(m==='listen'){o=opts(it,3);app.innerHTML=h+`<p>گوش بده و تصویر درست را بزن</p><button class="say" id="sp">🔊 دوباره</button><div class="g3">${o.map((x,i)=>`<button class="opt emo" data-i="${i}">${art(x)}</button>`).join('')}</div>`;setTimeout(()=>say(it.w),250)}
+else if(m==='pick'){o=opts(it,4);app.innerHTML=h+`<div class="big">${art(it,'hero-art')}</div><button class="say" id="sp">🔊 تلفظ</button><div class="g2">${o.map((x,i)=>`<button class="opt" data-i="${i}">${x.w}</button>`).join('')}</div>`}
 else if(m==='trans'){o=opts(it,4);app.innerHTML=h+`<div class="en">${it.w}</div><button class="say" id="sp">🔊 تلفظ</button><div class="g2">${o.map((x,i)=>`<button class="opt fa" data-i="${i}">${x.f}</button>`).join('')}</div>`;setTimeout(()=>say(it.w),250)}
-else{const w=it.w.toUpperCase().split(''),got=[];app.innerHTML=h+`<div class="big" style="font-size:84px">${it.e}</div><h2>${it.f}</h2><div class="slots" id="sl"></div><div class="tiles" id="tl"></div><button class="say" id="sp">🔊 تلفظ</button>`;
+else if(m==='truth'){const all=CM[R.cat].w.filter(x=>x!==it),shown=Math.random()<.5?it:all[Math.floor(Math.random()*all.length)],isTrue=shown===it;app.innerHTML=h+`<p>آیا تصویر و کلمه با هم جور هستند؟</p><div class="big">${art(it,'hero-art')}</div><div class="en">${shown.w}</div><button class="say" id="sp">🔊 تلفظ</button><div class="row"><button class="opt" data-a="true">درست ✅</button><button class="opt" data-a="false">غلط ❌</button></div>`;setTimeout(()=>say(shown.w),250);document.getElementById('sp').onclick=()=>say(shown.w);app.querySelectorAll('.opt').forEach(b=>b.onclick=()=>{const ok=(b.dataset.a==='true')===isTrue;if(ok){b.classList.add('ok');if(!R.f)R.s++;win(it)}else{R.f=1;b.classList.add('bad');beep(180);setTimeout(()=>b.classList.remove('bad'),400)}});return}
+else{const w=it.w.toUpperCase().split(''),got=[];app.innerHTML=h+`<div class="big">${art(it,'hero-art')}</div><h2>${it.f}</h2><div class="slots" id="sl"></div><div class="tiles" id="tl"></div><button class="say" id="sp">🔊 تلفظ</button>`;
 const sl=document.getElementById('sl'),tl=document.getElementById('tl'),dr=()=>sl.innerHTML=w.map((_,i)=>`<div class="slot">${got[i]||''}</div>`).join('');dr();
 sh(w).forEach(ch=>{const b=document.createElement('button');b.className='tile';b.textContent=ch;b.onclick=()=>{if(w[got.length]===ch){got.push(ch);b.disabled=true;beep(660,.08);dr();if(got.length===w.length){if(!R.f)R.s++;win(it)}}else{R.f=1;beep(180);b.style.background='var(--bad)';setTimeout(()=>b.style.background='',350)}};tl.appendChild(b)});
 document.getElementById('sp').onclick=()=>say(it.w);return}
@@ -263,7 +267,7 @@ function win(it){beep(880);say(it.w);R.i++;setTimeout(ask,950)}
 function match(){const its=sh(CM[R.cat].w).slice(0,6);let open=[],mv=0,dn=0,lk=false;
 app.innerHTML=topbar(`games('${R.cat}')`,'→ بازی‌ها')+`<p>هر تصویر را با کلمه‌اش جفت کن</p><div class="g3" id="mg"></div>`;const g=document.getElementById('mg');
 sh(its.flatMap((x,i)=>[{i,e:1},{i,e:0}])).forEach(c=>{const b=document.createElement('button');b.className='card';b.textContent='❓';
-b.onclick=()=>{if(lk||b.classList.contains('up'))return;b.classList.add('up');b.textContent=c.e?its[c.i].e:its[c.i].w;if(c.e)b.style.fontSize='44px';else say(its[c.i].w);open.push([c,b]);
+b.onclick=()=>{if(lk||b.classList.contains('up'))return;b.classList.add('up');b.innerHTML=c.e?art(its[c.i],'card-art'):its[c.i].w;if(c.e)b.style.fontSize='44px';else say(its[c.i].w);open.push([c,b]);
 if(open.length===2){mv++;lk=true;const[[x,bx],[y,by]]=open;open=[];
 if(x.i===y.i){beep(880);dn++;bx.classList.add('ok');by.classList.add('ok');lk=false;if(dn===6)setTimeout(()=>fin(mv<=8?3:mv<=12?2:1),700)}
 else setTimeout(()=>{[bx,by].forEach(z=>{z.classList.remove('up');z.textContent='❓';z.style.fontSize=''});lk=false},850)}};g.appendChild(b)})}
