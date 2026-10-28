@@ -207,8 +207,8 @@ const sh=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.r
 	  return true
 	 }catch(e){return false}
 	}
-	const FOX_AUDIO={welcome:'./assets/audio/foxy-welcome.wav',correct:'./assets/audio/foxy-correct.wav',tryAgain:'./assets/audio/foxy-try-again.wav',choose:'./assets/audio/foxy-choose-category.wav',locked:'./assets/audio/foxy-locked.wav'};let foxAudio;
-	function playFoxyAudio(key,fallback,onDone){try{if(foxAudio){foxAudio.pause();foxAudio.currentTime=0}const wrap=document.getElementById('foxArtWrap');if(wrap)wrap.classList.add('talking');const a=new Audio(FOX_AUDIO[key]);foxAudio=a;a.onended=()=>{if(wrap)wrap.classList.remove('talking');if(onDone)onDone()};a.onerror=()=>{if(wrap)wrap.classList.remove('talking');if(fallback)fallback()};const p=a.play();if(p&&p.catch)p.catch(()=>{if(wrap)wrap.classList.remove('talking');if(fallback)fallback()});return true}catch(e){if(fallback)fallback();return false}}
+	const FOX_AUDIO={welcome:'./assets/audio/foxy-welcome.mp3',correct:'./assets/audio/foxy-correct.mp3',tryAgain:'./assets/audio/foxy-try-again.mp3',choose:'./assets/audio/foxy-choose-category.mp3',locked:'./assets/audio/foxy-locked.mp3'};let foxAudio;
+	function playFoxyAudio(key,fallback,onDone){try{if(foxAudio){foxAudio.pause();foxAudio.currentTime=0}const wrap=document.getElementById('foxArtWrap');if(wrap)wrap.classList.add('talking');const a=new Audio(FOX_AUDIO[key]);a.preload='none';foxAudio=a;a.onended=()=>{if(wrap)wrap.classList.remove('talking');if(onDone)onDone()};a.onerror=()=>{if(wrap)wrap.classList.remove('talking');if(fallback)fallback()};const p=a.play();if(p&&p.catch)p.catch(()=>{if(wrap)wrap.classList.remove('talking');if(fallback)fallback()});return true}catch(e){if(fallback)fallback();return false}}
 const WELCOME_TEXT='سلام سلام قهرمان! من فاکسی‌یارم. دست تکون می‌دم و دمم رو تکون می‌دم تا با هم انگلیسی یاد بگیریم. آماده‌ای؟ بزن بریم!';
 let welcomeFallback=0,introBusy=false;
 	function speakWelcome(onDone){
