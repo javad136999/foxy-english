@@ -109,7 +109,7 @@ body{background:radial-gradient(ellipse at 50% 0,#f9fdff 0,transparent 52%),line
 .age-intro p{font-size:14px;margin:3px 0 2px}
 .age{border-radius:24px}
 @media(max-width:390px){.welcome-card{padding:12px;border-radius:28px}.welcome-scene{min-height:205px}.fox-art-wrap{height:198px}.welcome-dialog{font-size:14px;padding:12px}.welcome-perks span{font-size:11px;padding:6px 8px}}
-@media(prefers-reduced-motion:reduce){.fox-art,.age-intro .age-fox,.scene-cloud,.scene-spark,.fox-art-wrap.spin .fox-art{animation:none!important}.welcome-cta,.sticker,.opt{transition:none}}
+@media(prefers-reduced-motion:reduce){.fox-art,.age-intro .age-fox,.scene-cloud,.scene-spark,.fox-art-wrap.spin .fox-art,.fox-art-wrap.greeting::before,.fox-art-wrap.greeting::after,.greeting-bubble{animation:none!important}.welcome-cta,.sticker,.opt{transition:none}}
 
 /* ===== Foxy visual refresh: quiet depth, tactile motion, clearer learning focus ===== */
 body{background:radial-gradient(circle at 50% -8%,rgba(255,255,255,.98) 0 18%,transparent 45%),linear-gradient(180deg,#dff5ff 0%,#f5fbff 55%,#eef9ef 100%) fixed;overflow-x:hidden}
@@ -120,6 +120,8 @@ body{-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;line-h
 .welcome-brand{color:#42566b;font-size:13px;letter-spacing:.045em}.brand-mark{background:linear-gradient(145deg,#ffbd79,#f5765d);box-shadow:0 6px 14px rgba(245,118,93,.25)}
 .welcome-scene{min-height:264px;margin:0 -1px 18px;border-radius:30px;background:linear-gradient(180deg,#9ddcf3 0%,#d9f6ff 57%,#eff9df 100%);box-shadow:inset 0 -22px 40px rgba(93,185,143,.1)}
 .welcome-scene:after{opacity:.78}.fox-art-wrap{width:min(78%,280px);height:246px;filter:saturate(1.04)}.fox-art{filter:drop-shadow(0 18px 11px rgba(65,75,70,.18));animation:fox-breathe 4.2s cubic-bezier(.45,.05,.55,.95) infinite;will-change:transform}
+.fox-art-wrap::before{content:"👋";position:absolute;z-index:4;top:19px;right:6%;font-size:38px;filter:drop-shadow(0 5px 4px rgba(65,75,70,.18));opacity:0;transform-origin:70% 90%}.fox-art-wrap.greeting::before{opacity:1;animation:wave-hand 1.15s ease-in-out infinite}.fox-art-wrap::after{content:"〰";position:absolute;z-index:3;left:2%;bottom:28px;color:#e17d55;font-size:58px;font-weight:900;line-height:.6;opacity:0;transform-origin:80% 50%}.fox-art-wrap.greeting::after{opacity:.9;animation:tail-wag .72s ease-in-out infinite alternate}@keyframes wave-hand{0%,100%{transform:rotate(18deg) translateY(1px)}50%{transform:rotate(-23deg) translateY(-5px)}}@keyframes tail-wag{from{transform:rotate(-14deg) translateX(-2px)}to{transform:rotate(16deg) translateX(5px)}}
+.greeting-bubble{position:absolute;z-index:5;top:15px;left:7%;padding:9px 13px;border:2px solid rgba(255,255,255,.9);border-radius:18px 18px 18px 4px;background:#fff;color:#ed7658;font-size:17px;font-weight:1000;box-shadow:0 7px 16px rgba(69,103,115,.14);animation:bubble-pop 1.8s ease-in-out infinite}@keyframes bubble-pop{50%{transform:translateY(-4px) rotate(-2deg)}}
 @keyframes fox-breathe{0%,100%{transform:translate3d(0,2px,0) rotate(-1deg) scale(1)}25%{transform:translate3d(-2px,-6px,0) rotate(1.5deg) scale(1.015)}52%{transform:translate3d(1px,1px,0) rotate(-1deg) scale(1)}78%{transform:translate3d(2px,-8px,0) rotate(2deg) scale(1.02)}}
 .fox-art-wrap.spin .fox-art{animation:fox-greeting .85s cubic-bezier(.2,.8,.25,1)}
 @keyframes fox-greeting{0%{transform:rotate(0) scale(1)}35%{transform:rotate(-7deg) translateY(-13px) scale(1.06)}68%{transform:rotate(7deg) translateY(-4px) scale(1.03)}100%{transform:rotate(0) scale(1)}}
@@ -195,7 +197,7 @@ function sync(){if(!SB_URL)return;fetch(SB_URL+'/rest/v1/progress?on_conflict=de
 const app=document.getElementById('app');
 const sh=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
 function say(t){try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);u.lang='en-US';u.rate=.8;speechSynthesis.speak(u)}catch(e){}}
-const WELCOME_TEXT='سلام قهرمان! به فاکسی‌یار خوش اومدی. اینجا با هم بازی می‌کنیم و زبان انگلیسی یاد می‌گیریم. من فاکسی‌ام؛ کلمه‌های تازه کشف می‌کنیم، بازی می‌کنیم و ستاره می‌گیریم. آماده‌ای؟ بزن بریم!';
+const WELCOME_TEXT='سلام سلام قهرمان! من فاکسی‌یارم. دست تکون می‌دم و دمم رو تکون می‌دم تا با هم انگلیسی یاد بگیریم. آماده‌ای؟ بزن بریم!';
 let welcomeFallback=0,introBusy=false;
 function speakWelcome(onDone){
 if(!('speechSynthesis' in window)||typeof SpeechSynthesisUtterance==='undefined')return false;
@@ -232,13 +234,13 @@ function playfulFox(){const wrap=document.getElementById('foxArtWrap');if(!wrap)
 function welcome(){introBusy=false;clearTimeout(welcomeFallback);document.body.dataset.age='';
 app.innerHTML=`<section class="welcome-card" aria-label="خوش‌آمدگویی فاکسی">
 <div class="welcome-brand"><span class="brand-mark" aria-hidden="true">🦊</span><span>فاکسی‌یار <span aria-hidden="true">·</span> انگلیسی با بازی</span></div>
-<div class="welcome-scene"><i class="scene-cloud one" aria-hidden="true"></i><i class="scene-cloud two" aria-hidden="true"></i><span class="scene-spark a" aria-hidden="true">✦</span><span class="scene-spark b" aria-hidden="true">✧</span>
-<button class="fox-art-wrap" id="foxArtWrap" type="button" onclick="playfulFox()" aria-label="روی فاکسی بزن تا بچرخد"><img class="fox-art" src="./assets/foxy-mascot-refined.png" alt="فاکسی‌یار، روباه بازیگوش با دست تکان‌داده" fetchpriority="high"></button></div>
+<div class="welcome-scene"><div class="greeting-bubble" aria-hidden="true">سلام سلام! 👋</div><i class="scene-cloud one" aria-hidden="true"></i><i class="scene-cloud two" aria-hidden="true"></i><span class="scene-spark a" aria-hidden="true">✦</span><span class="scene-spark b" aria-hidden="true">✧</span>
+<button class="fox-art-wrap greeting" id="foxArtWrap" type="button" onclick="playfulFox()" aria-label="روی فاکسی بزن تا بچرخد"><img class="fox-art" src="./assets/foxy-mascot-refined.png" alt="فاکسی‌یار، روباه بازیگوش با دست تکان‌داده" fetchpriority="high"></button></div>
 <h1 class="welcome-title">سلام قهرمان!</h1><p class="welcome-subtitle">با فاکسی بازی کن، ستاره بگیر و انگلیسی را کشف کن.</p>
 <div class="welcome-dialog" aria-live="polite"><p>${WELCOME_TEXT}</p><button class="welcome-speak" type="button" onclick="speakWelcome()">🔊 دوباره گوش کن</button></div>
 <div class="welcome-perks"><span>🎮 بازی‌های بامزه</span><span>🔤 کلمه‌های تازه</span><span>⭐ ستاره جمع کن</span></div>
 <button class="welcome-cta" id="startBtn" type="button" onclick="beginAdventure()"><span>بزن بریم، فاکسی!</span><span aria-hidden="true">←</span></button>
-<p class="welcome-foot">صدای فاکسی با گفتار دستگاه پخش می‌شود؛ اگر صدا فعال نشد، «دوباره گوش کن» را بزن.</p></section>`;
+<p class="welcome-foot">فاکسی سلام می‌کند، دست تکان می‌دهد و با صدای فارسی با تو حرف می‌زند؛ اگر صدا فعال نشد، «دوباره گوش کن» را بزن.</p></section>`;
 setTimeout(()=>speakWelcome(),650)}
 function beginAdventure(){if(introBusy)return;introBusy=true;playfulFox();const advance=()=>{if(!introBusy)return;introBusy=false;clearTimeout(welcomeFallback);if(P.age)cats();else ages()};
 if(speakWelcome(()=>setTimeout(advance,450)))welcomeFallback=setTimeout(advance,8500);else setTimeout(advance,500)}
