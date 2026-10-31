@@ -201,14 +201,22 @@ const sh=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.r
 	if('speechSynthesis' in window)window.speechSynthesis.onvoiceschanged=refreshSpeechVoices;
 	function say(t){
  try{
+  if(window.FoxyTTS&&typeof window.FoxyTTS.speak==='function'){window.FoxyTTS.speak(String(t));return true}
   if(!('speechSynthesis' in window)||typeof SpeechSynthesisUtterance==='undefined')return false;
-  const voices=refreshSpeechVoices(),u=new SpeechSynthesisUtterance(String(t));u.lang='en-US';u.rate=.88;u.volume=1;
-  const v=voices.find(x=>/^en([_-]|$)/i.test(x.lang))||voices.find(x=>/^en-US$/i.test(x.lang));if(v)u.voice=v;
-  window.speechSynthesis.cancel();window.speechSynthesis.resume();window.speechSynthesis.speak(u);return true
+  const ticket=++say.ticket, speakNow=()=>{
+   if(ticket!==say.ticket)return;
+   const voices=refreshSpeechVoices(),u=new SpeechSynthesisUtterance(String(t));u.lang='en-US';u.rate=.88;u.volume=1;
+   const v=voices.find(x=>/^en([_-]|$)/i.test(x.lang))||voices.find(x=>/^en-US$/i.test(x.lang));if(v)u.voice=v;
+   window.speechSynthesis.cancel();window.speechSynthesis.resume();window.speechSynthesis.speak(u);
+  };
+  speakNow();
+  if(!refreshSpeechVoices().length)setTimeout(speakNow,140);
+  return true
  }catch(e){return false}
 }
+say.ticket=0;
 	const FOX_AUDIO={welcome:'./assets/audio/foxy-welcome.mp3',choose:'./assets/audio/foxy-choose-category.mp3',locked:'./assets/audio/foxy-locked.mp3'};let foxAudio;
-	function playFoxyAudio(key,fallback,onDone){try{if(foxAudio){foxAudio.pause();foxAudio.currentTime=0}const wrap=document.getElementById('foxArtWrap');if(wrap)wrap.classList.add('talking');const a=new Audio(FOX_AUDIO[key]);a.preload='none';foxAudio=a;a.onended=()=>{if(wrap)wrap.classList.remove('talking');if(onDone)onDone()};a.onerror=()=>{if(wrap)wrap.classList.remove('talking');if(fallback)fallback()};const p=a.play();if(p&&p.catch)p.catch(()=>{if(wrap)wrap.classList.remove('talking');if(fallback)fallback()});return true}catch(e){if(fallback)fallback();return false}}
+	function playFoxyAudio(key,fallback,onDone){try{if(foxAudio){foxAudio.pause();foxAudio.currentTime=0}const wrap=document.getElementById('foxArtWrap');if(wrap)wrap.classList.add('talking');const a=new Audio(FOX_AUDIO[key]);a.preload='auto';foxAudio=a;a.onended=()=>{if(wrap)wrap.classList.remove('talking');if(onDone)onDone()};a.onerror=()=>{if(wrap)wrap.classList.remove('talking');if(fallback)fallback()};a.load();const p=a.play();if(p&&p.catch)p.catch(()=>{if(wrap)wrap.classList.remove('talking');if(fallback)fallback()});return true}catch(e){if(fallback)fallback();return false}}
 const WELCOME_TEXT='سلام سلام قهرمان! من فاکسی‌یارم. دست تکون می‌دم و دمم رو تکون می‌دم تا با هم انگلیسی یاد بگیریم. آماده‌ای؟ بزن بریم!';
 let welcomeFallback=0,introBusy=false;
 	function speakWelcome(onDone){
@@ -256,8 +264,13 @@ app.innerHTML=`<section class="welcome-card" aria-label="خوش‌آمدگویی
 <button class="welcome-cta" id="startBtn" type="button" onclick="beginAdventure()"><span>بزن بریم، فاکسی!</span><span aria-hidden="true">←</span></button>
 <p class="welcome-foot">فاکسی سلام می‌کند، دست تکان می‌دهد و با صدای فارسی با تو حرف می‌زند؛ اگر صدا فعال نشد، «دوباره گوش کن» را بزن.</p></section>`;
 setTimeout(()=>speakWelcome(),650)}
-function beginAdventure(){if(introBusy)return;introBusy=true;playfulFox();const advance=()=>{if(!introBusy)return;introBusy=false;clearTimeout(welcomeFallback);if(P.age)cats();else ages()};
-if(speakWelcome(()=>setTimeout(advance,450)))welcomeFallback=setTimeout(advance,8500);else setTimeout(advance,500)}
+function beginAdventure(){
+ if(introBusy)return;
+ introBusy=true;clearTimeout(welcomeFallback);say.ticket++;
+ if(foxAudio){foxAudio.pause();foxAudio.currentTime=0;foxAudio=null}
+ if('speechSynthesis' in window)try{speechSynthesis.cancel()}catch(e){}
+ playfulFox();introBusy=false;if(P.age)cats();else ages()
+}
 function ages(){document.body.dataset.age='';const D={a:['#ffe08a','شنیدن و انتخاب تصویر'],b:['#a8ecd9','دیدن و پیدا کردن کلمه'],c:['#cfc6ff','املا و معنی کلمه']};
 app.innerHTML=`<button class="pill" onclick="welcome()">← برگشت به فاکسی</button><div class="age-intro"><img class="age-fox" src="./assets/foxy-mascot-refined.webp" alt="فاکسی"><h1>چند سالته؟</h1><p>یک گروه سنی انتخاب کن تا بازی‌های مناسب خودت را پیدا کنم.</p></div>`+Object.keys(AG).map(k=>`<button class="sticker age" style="--c:${D[k][0]}" onclick="setAge('${k}')"><span class="ab">${AG[k].e}</span><span>${AG[k].t}<small>${D[k][1]}</small></span></button>`).join('')+`<p><a href="./privacy.html" onclick="event.preventDefault();gate(()=>location.href='./privacy.html')" style="color:inherit">حریم خصوصی (ویژه والدین)</a></p>`}
 function setAge(k){P.age=k;save();cats()}
