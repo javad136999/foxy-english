@@ -218,7 +218,7 @@ say.ticket=0;
 	const FOX_AUDIO={welcome:'./assets/audio/foxy-welcome.mp3',choose:'./assets/audio/foxy-choose-category.mp3',locked:'./assets/audio/foxy-locked.mp3'};let foxAudio;
 	function playFoxyAudio(key,fallback,onDone){try{if(foxAudio){foxAudio.pause();foxAudio.currentTime=0}const wrap=document.getElementById('foxArtWrap');if(wrap)wrap.classList.add('talking');const a=new Audio(FOX_AUDIO[key]);a.preload='auto';foxAudio=a;a.onended=()=>{if(wrap)wrap.classList.remove('talking');if(onDone)onDone()};a.onerror=()=>{if(wrap)wrap.classList.remove('talking');if(fallback)fallback()};a.load();const p=a.play();if(p&&p.catch)p.catch(()=>{if(wrap)wrap.classList.remove('talking');if(fallback)fallback()});return true}catch(e){if(fallback)fallback();return false}}
 const WELCOME_TEXT='سلام سلام قهرمان! من فاکسی‌یارم. دست تکون می‌دم و دمم رو تکون می‌دم تا با هم انگلیسی یاد بگیریم. آماده‌ای؟ بزن بریم!';
-let welcomeFallback=0,introBusy=false;
+let welcomeFallback=0,welcomeTimer=0,introBusy=false;
 	function speakWelcome(onDone){
 	const fallback=()=>{
 	if(!('speechSynthesis' in window)||typeof SpeechSynthesisUtterance==='undefined')return false;
@@ -263,10 +263,10 @@ app.innerHTML=`<section class="welcome-card" aria-label="خوش‌آمدگویی
 <div class="welcome-perks"><span>🎮 بازی‌های بامزه</span><span>🔤 کلمه‌های تازه</span><span>⭐ ستاره جمع کن</span></div>
 <button class="welcome-cta" id="startBtn" type="button" onclick="beginAdventure()"><span>بزن بریم، فاکسی!</span><span aria-hidden="true">←</span></button>
 <p class="welcome-foot">فاکسی سلام می‌کند، دست تکان می‌دهد و با صدای فارسی با تو حرف می‌زند؛ اگر صدا فعال نشد، «دوباره گوش کن» را بزن.</p></section>`;
-setTimeout(()=>speakWelcome(),650)}
+welcomeTimer=setTimeout(()=>speakWelcome(),650)}
 function beginAdventure(){
  if(introBusy)return;
- introBusy=true;clearTimeout(welcomeFallback);say.ticket++;
+ introBusy=true;clearTimeout(welcomeFallback);clearTimeout(welcomeTimer);say.ticket++;
  if(foxAudio){foxAudio.pause();foxAudio.currentTime=0;foxAudio=null}
  if('speechSynthesis' in window)try{speechSynthesis.cancel()}catch(e){}
  playfulFox();introBusy=false;if(P.age)cats();else ages()
