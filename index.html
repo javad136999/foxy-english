@@ -200,14 +200,14 @@ const sh=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.r
 	function refreshSpeechVoices(){try{speechVoices=window.speechSynthesis.getVoices()||[]}catch(e){speechVoices=[]}return speechVoices}
 	if('speechSynthesis' in window)window.speechSynthesis.onvoiceschanged=refreshSpeechVoices;
 	function say(t){
-	 try{
-	  if(!('speechSynthesis' in window)||typeof SpeechSynthesisUtterance==='undefined')return false;
-	  const speak=()=>{const voices=refreshSpeechVoices(),u=new SpeechSynthesisUtterance(String(t));u.lang='en-US';u.rate=.8;u.volume=1;const v=voices.find(x=>/^en([_-]|$)/i.test(x.lang))||voices.find(x=>/^en-US$/i.test(x.lang));if(v)u.voice=v;window.speechSynthesis.cancel();window.speechSynthesis.resume();window.speechSynthesis.speak(u)};
-	  if(refreshSpeechVoices().length)speak();else setTimeout(speak,180);
-	  return true
-	 }catch(e){return false}
-	}
-	const FOX_AUDIO={welcome:'./assets/audio/foxy-welcome.mp3',correct:'./assets/audio/foxy-correct.mp3',tryAgain:'./assets/audio/foxy-try-again.mp3',choose:'./assets/audio/foxy-choose-category.mp3',locked:'./assets/audio/foxy-locked.mp3'};let foxAudio;
+ try{
+  if(!('speechSynthesis' in window)||typeof SpeechSynthesisUtterance==='undefined')return false;
+  const voices=refreshSpeechVoices(),u=new SpeechSynthesisUtterance(String(t));u.lang='en-US';u.rate=.88;u.volume=1;
+  const v=voices.find(x=>/^en([_-]|$)/i.test(x.lang))||voices.find(x=>/^en-US$/i.test(x.lang));if(v)u.voice=v;
+  window.speechSynthesis.cancel();window.speechSynthesis.resume();window.speechSynthesis.speak(u);return true
+ }catch(e){return false}
+}
+	const FOX_AUDIO={welcome:'./assets/audio/foxy-welcome.mp3',choose:'./assets/audio/foxy-choose-category.mp3',locked:'./assets/audio/foxy-locked.mp3'};let foxAudio;
 	function playFoxyAudio(key,fallback,onDone){try{if(foxAudio){foxAudio.pause();foxAudio.currentTime=0}const wrap=document.getElementById('foxArtWrap');if(wrap)wrap.classList.add('talking');const a=new Audio(FOX_AUDIO[key]);a.preload='none';foxAudio=a;a.onended=()=>{if(wrap)wrap.classList.remove('talking');if(onDone)onDone()};a.onerror=()=>{if(wrap)wrap.classList.remove('talking');if(fallback)fallback()};const p=a.play();if(p&&p.catch)p.catch(()=>{if(wrap)wrap.classList.remove('talking');if(fallback)fallback()});return true}catch(e){if(fallback)fallback();return false}}
 const WELCOME_TEXT='سلام سلام قهرمان! من فاکسی‌یارم. دست تکون می‌دم و دمم رو تکون می‌دم تا با هم انگلیسی یاد بگیریم. آماده‌ای؟ بزن بریم!';
 let welcomeFallback=0,introBusy=false;
@@ -269,17 +269,17 @@ const opts=(it,n)=>sh([...sh(CM[R.cat].w.filter(x=>x!==it)).slice(0,n-1),it]);
 function head(){return topbar(`games('${R.cat}')`,'→ بازی‌ها')+`<div class="bar"><i style="width:${R.i/R.q.length*100}%"></i></div>`}
 function ask(){if(R.i>=R.q.length)return fin(R.s/R.q.length>=.9?3:R.s/R.q.length>=.6?2:1);
 const it=R.q[R.i],m=R.mode;R.f=0;let o,h=head();
-if(m==='listen'){o=opts(it,3);app.innerHTML=h+`<p>گوش بده و تصویر درست را بزن</p><button class="say" id="sp">🔊 دوباره</button><div class="g3">${o.map((x,i)=>`<button class="opt emo" data-i="${i}">${art(x)}</button>`).join('')}</div>`;setTimeout(()=>say(it.w),250)}
+if(m==='listen'){o=opts(it,3);app.innerHTML=h+`<p>گوش بده و تصویر درست را بزن</p><button class="say" id="sp">🔊 دوباره</button><div class="g3">${o.map((x,i)=>`<button class="opt emo" data-i="${i}">${art(x)}</button>`).join('')}</div>`;requestAnimationFrame(()=>say(it.w))}
 else if(m==='pick'){o=opts(it,4);app.innerHTML=h+`<div class="big">${art(it,'hero-art')}</div><button class="say" id="sp">🔊 تلفظ</button><div class="g2">${o.map((x,i)=>`<button class="opt" data-i="${i}">${x.w}</button>`).join('')}</div>`}
-else if(m==='trans'){o=opts(it,4);app.innerHTML=h+`<div class="en">${it.w}</div><button class="say" id="sp">🔊 تلفظ</button><div class="g2">${o.map((x,i)=>`<button class="opt fa" data-i="${i}">${x.f}</button>`).join('')}</div>`;setTimeout(()=>say(it.w),250)}
-else if(m==='truth'){const all=CM[R.cat].w.filter(x=>x!==it),shown=Math.random()<.5?it:all[Math.floor(Math.random()*all.length)],isTrue=shown===it;app.innerHTML=h+`<p>آیا تصویر و کلمه با هم جور هستند؟</p><div class="big">${art(it,'hero-art')}</div><div class="en">${shown.w}</div><button class="say" id="sp">🔊 تلفظ</button><div class="row"><button class="opt" data-a="true">درست ✅</button><button class="opt" data-a="false">غلط ❌</button></div>`;setTimeout(()=>say(shown.w),250);document.getElementById('sp').onclick=()=>say(shown.w);app.querySelectorAll('.opt').forEach(b=>b.onclick=()=>{const ok=(b.dataset.a==='true')===isTrue;if(ok){b.classList.add('ok');if(!R.f)R.s++;win(it)}else{R.f=1;b.classList.add('bad');beep(180);playFoxyAudio('tryAgain');setTimeout(()=>b.classList.remove('bad'),400)}});return}
+else if(m==='trans'){o=opts(it,4);app.innerHTML=h+`<div class="en">${it.w}</div><button class="say" id="sp">🔊 تلفظ</button><div class="g2">${o.map((x,i)=>`<button class="opt fa" data-i="${i}">${x.f}</button>`).join('')}</div>`;requestAnimationFrame(()=>say(it.w))}
+else if(m==='truth'){const all=CM[R.cat].w.filter(x=>x!==it),shown=Math.random()<.5?it:all[Math.floor(Math.random()*all.length)],isTrue=shown===it;app.innerHTML=h+`<p>آیا تصویر و کلمه با هم جور هستند؟</p><div class="big">${art(it,'hero-art')}</div><div class="en">${shown.w}</div><button class="say" id="sp">🔊 تلفظ</button><div class="row"><button class="opt" data-a="true">درست ✅</button><button class="opt" data-a="false">غلط ❌</button></div>`;requestAnimationFrame(()=>say(shown.w));document.getElementById('sp').onclick=()=>say(shown.w);app.querySelectorAll('.opt').forEach(b=>b.onclick=()=>{const ok=(b.dataset.a==='true')===isTrue;if(ok){b.classList.add('ok');if(!R.f)R.s++;win(it)}else{R.f=1;b.classList.add('bad');beep(180);setTimeout(()=>b.classList.remove('bad'),400)}});return}
 else{const w=it.w.toUpperCase().split(''),got=[];app.innerHTML=h+`<div class="big">${art(it,'hero-art')}</div><h2>${it.f}</h2><div class="slots" id="sl"></div><div class="tiles" id="tl"></div><button class="say" id="sp">🔊 تلفظ</button>`;
 const sl=document.getElementById('sl'),tl=document.getElementById('tl'),dr=()=>sl.innerHTML=w.map((_,i)=>`<div class="slot">${got[i]||''}</div>`).join('');dr();
-sh(w).forEach(ch=>{const b=document.createElement('button');b.className='tile';b.textContent=ch;b.onclick=()=>{if(w[got.length]===ch){got.push(ch);b.disabled=true;beep(660,.08);dr();if(got.length===w.length){if(!R.f)R.s++;win(it)}}else{R.f=1;beep(180);playFoxyAudio('tryAgain');b.style.background='var(--bad)';setTimeout(()=>b.style.background='',350)}};tl.appendChild(b)});
+sh(w).forEach(ch=>{const b=document.createElement('button');b.className='tile';b.textContent=ch;b.onclick=()=>{if(w[got.length]===ch){got.push(ch);b.disabled=true;beep(660,.08);dr();if(got.length===w.length){if(!R.f)R.s++;win(it)}}else{R.f=1;beep(180);b.style.background='var(--bad)';setTimeout(()=>b.style.background='',350)}};tl.appendChild(b)});
 document.getElementById('sp').onclick=()=>say(it.w);return}
 document.getElementById('sp').onclick=()=>say(it.w);
-app.querySelectorAll('.opt').forEach(b=>b.onclick=()=>{if(o[b.dataset.i]===it){b.classList.add('ok');app.querySelectorAll('.opt').forEach(x=>x.disabled=true);if(!R.f)R.s++;win(it)}else{R.f=1;b.classList.add('bad');beep(180);playFoxyAudio('tryAgain');setTimeout(()=>b.classList.remove('bad'),400)}})}
-	function win(it){beep(880);playFoxyAudio('correct',()=>say(it.w));R.i++;setTimeout(ask,950)}
+app.querySelectorAll('.opt').forEach(b=>b.onclick=()=>{if(o[b.dataset.i]===it){b.classList.add('ok');app.querySelectorAll('.opt').forEach(x=>x.disabled=true);if(!R.f)R.s++;win(it)}else{R.f=1;b.classList.add('bad');beep(180);setTimeout(()=>b.classList.remove('bad'),400)}})}
+	function win(it){beep(880);say(it.w);R.i++;setTimeout(ask,950)}
 function match(){const its=sh(CM[R.cat].w).slice(0,6);let open=[],mv=0,dn=0,lk=false;
 app.innerHTML=topbar(`games('${R.cat}')`,'→ بازی‌ها')+`<p>هر تصویر را با کلمه‌اش جفت کن</p><div class="g3" id="mg"></div>`;const g=document.getElementById('mg');
 sh(its.flatMap((x,i)=>[{i,e:1},{i,e:0}])).forEach(c=>{const b=document.createElement('button');b.className='card';b.textContent='❓';
