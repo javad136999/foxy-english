@@ -144,7 +144,11 @@ body{-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;line-h
 @media(max-width:390px){.welcome-scene{min-height:228px}.fox-art-wrap{height:214px}.cat{min-height:128px}}
 @media(prefers-reduced-motion:reduce){.fox-art,.big,.stars,.opt.ok,.card.ok,.cat b img{animation:none!important}.sticker,.opt,.card{transition:none!important}}
 
-.story-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:14px 0}.story-card{position:relative;display:flex;flex-direction:column;align-items:center;gap:4px;min-height:150px;padding:12px 8px;border:1px solid rgba(62,93,112,.08);border-radius:22px;background:var(--card);box-shadow:0 5px 0 var(--edge),0 10px 18px var(--glow);color:var(--ink)}.story-card:active{transform:translateY(4px)}.story-card img{width:72px;height:72px;object-fit:contain}.story-card b{font-size:14px;line-height:1.5}.story-card small,.story-topic,.story-note{color:#718096;font-size:12px;font-weight:800}.story-num{position:absolute;top:7px;left:9px;color:var(--vio);font-weight:900}.story-reader{padding:18px 14px;border-radius:30px;background:rgba(255,255,255,.84);box-shadow:0 12px 28px var(--glow)}.story-cover{width:150px;height:150px;object-fit:contain;filter:drop-shadow(0 8px 7px var(--glow))}.story-reader h1{margin:5px 0}.story-reader h2{font-size:17px;opacity:.65}.story-text{margin:18px 4px;text-align:right;font-size:17px;line-height:2.2;opacity:1}.story-actions{display:grid;gap:9px}.story-actions .say{width:100%;margin:0}.english-story{background:var(--ok)}.story-entry{margin-top:12px} </style>
+.story-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:14px 0}.story-card{position:relative;display:flex;flex-direction:column;align-items:center;gap:4px;min-height:150px;padding:12px 8px;border:1px solid rgba(62,93,112,.08);border-radius:22px;background:var(--card);box-shadow:0 5px 0 var(--edge),0 10px 18px var(--glow);color:var(--ink)}.story-card:active{transform:translateY(4px)}.story-card img{width:72px;height:72px;object-fit:contain}.story-card b{font-size:14px;line-height:1.5}.story-card small,.story-topic,.story-note{color:#718096;font-size:12px;font-weight:800}.story-num{position:absolute;top:7px;left:9px;color:var(--vio);font-weight:900}.story-reader{padding:18px 14px;border-radius:30px;background:rgba(255,255,255,.84);box-shadow:0 12px 28px var(--glow)}.story-cover{width:150px;height:150px;object-fit:contain;filter:drop-shadow(0 8px 7px var(--glow))}.story-reader h1{margin:5px 0}.story-reader h2{font-size:17px;opacity:.65}.story-text{margin:18px 4px;text-align:right;font-size:17px;line-height:2.2;opacity:1}.story-actions{display:grid;gap:9px}.story-actions .say{width:100%;margin:0}.english-story{background:var(--ok)}.story-entry{margin-top:12px}
+/* کودک‌پسند: لمس آسان، متن کوتاه و تمرکز روی یک انتخاب در هر لحظه */
+body{font-size:17px}.pill{min-height:48px;padding:10px 17px;font-size:16px}.sticker{min-height:74px;padding:17px 16px;margin:12px 0;font-size:21px}.sticker small{font-size:15px}.opt{min-height:68px;padding:16px 8px}.say{min-height:54px;padding:12px 20px}.cat{min-height:148px}.story-card{min-height:164px;padding-top:16px}.story-card b{font-size:16px}.story-card small{font-size:13px}.story-entry{font-size:18px}.progress-label{margin:-7px 0 13px;color:#62798a;font-size:14px;font-weight:900}.welcome-foot{font-size:13px}.welcome-subtitle{font-size:17px}
+@media(max-width:390px){.g2{gap:10px}.cat{min-height:132px;font-size:18px}.cat b{width:66px;height:66px}.story-card{min-height:150px}.story-card b{font-size:14px}}
+</style>
 </head>
 <body><div id="bg"><i></i><i></i></div><div id="app"></div>
 <script>
@@ -284,11 +288,11 @@ app.innerHTML=`<section class="welcome-card" aria-label="خوش‌آمدگویی
 <div class="welcome-brand"><span class="brand-mark" aria-hidden="true">🦊</span><span>فاکسی‌یار <span aria-hidden="true">·</span> انگلیسی با بازی</span></div>
 <div class="welcome-scene"><div class="greeting-bubble" aria-hidden="true">سلام سلام! 👋</div><i class="scene-cloud one" aria-hidden="true"></i><i class="scene-cloud two" aria-hidden="true"></i><span class="scene-spark a" aria-hidden="true">✦</span><span class="scene-spark b" aria-hidden="true">✧</span>
 <button class="fox-art-wrap greeting" id="foxArtWrap" type="button" onclick="playfulFox()" aria-label="روی فاکسی بزن تا بچرخد"><img class="fox-art" src="./assets/foxy-mascot-refined.webp" alt="فاکسی‌یار، روباه بازیگوش با دست تکان‌داده" fetchpriority="high"></button></div>
-<h1 class="welcome-title">سلام قهرمان!</h1><p class="welcome-subtitle">با فاکسی بازی کن، ستاره بگیر و انگلیسی را کشف کن.</p>
+<h1 class="welcome-title">سلام قهرمان!</h1><p class="welcome-subtitle">با فاکسی بازی کن و انگلیسی یاد بگیر!</p>
 <div class="welcome-dialog" aria-live="polite"><p>${WELCOME_TEXT}</p><button class="welcome-speak" type="button" onclick="speakWelcome()">🔊 دوباره گوش کن</button></div>
 <div class="welcome-perks"><span>🎮 بازی‌های بامزه</span><span>🔤 کلمه‌های تازه</span><span>⭐ ستاره جمع کن</span></div>
 <button class="welcome-cta" id="startBtn" type="button" onclick="beginAdventure()"><span>بزن بریم، فاکسی!</span><span aria-hidden="true">←</span></button>
-<p class="welcome-foot">فاکسی سلام می‌کند، دست تکان می‌دهد و با صدای فارسی با تو حرف می‌زند؛ اگر صدا فعال نشد، «دوباره گوش کن» را بزن.</p></section>`;
+<p class="welcome-foot">فاکسی همیشه کمکت می‌کند.</p></section>`;
 welcomeTimer=setTimeout(()=>speakWelcome(),650)}
 	function beginAdventure(){
 	 if(introBusy)return;
@@ -296,15 +300,15 @@ welcomeTimer=setTimeout(()=>speakWelcome(),650)}
 	 stopFoxySpeech();
 	 playfulFox();introBusy=false;if(P.age)cats();else ages()
 }
-function ages(){document.body.dataset.age='';const D={a:['#ffe08a','شنیدن و انتخاب تصویر'],b:['#a8ecd9','دیدن و پیدا کردن کلمه'],c:['#cfc6ff','املا و معنی کلمه']};
+function ages(){document.body.dataset.age='';const D={a:['#ffe08a','بازی‌های ساده و شنیدنی'],b:['#a8ecd9','بازی‌های پیدا کردن کلمه'],c:['#cfc6ff','بازی‌های املا و معنی']};
 app.innerHTML=`<button class="pill" onclick="welcome()">← برگشت به فاکسی</button><div class="age-intro"><img class="age-fox" src="./assets/foxy-mascot-refined.webp" alt="فاکسی"><h1>چند سالته؟</h1><p>یک گروه سنی انتخاب کن تا بازی‌های مناسب خودت را پیدا کنم.</p></div>`+Object.keys(AG).map(k=>`<button class="sticker age" style="--c:${D[k][0]}" onclick="setAge('${k}')"><span class="ab">${AG[k].e}</span><span>${AG[k].t}<small>${D[k][1]}</small></span></button>`).join('')+`<button class="sticker story-entry" onclick="storyShelf()">📚 قصه‌های رایگان · ۵۰ داستان</button>`+`<p><a href="./privacy.html" onclick="event.preventDefault();gate(()=>location.href='./privacy.html')" style="color:inherit">حریم خصوصی (ویژه والدین)</a></p>`}
 function setAge(k){P.age=k;save();cats()}
 	function cats(){if(!P.age)return ages();document.body.dataset.age=P.age;const A=AG[P.age];
-	app.innerHTML=topbar('ages()','🔁 سن')+`<h1>${A.e} ${A.t}</h1><p>یک دسته انتخاب کن</p><div class="g2">`+A.c.map((id,i)=>{const c=CM[id],lk=!P.premium&&i>=FREE;return `<button class="sticker cat" style="background:${c.c};color:#2a2347" onclick="${lk?'gate(paywall)':`games('${id}')`}"><b>${c.img?`<img src="${c.img}" alt="" loading="lazy">`:c.e}</b>${c.n}${lk?'<i>🔒</i>':''}</button>`}).join('')+'</div>';setTimeout(()=>playFoxyAudio('choose'),300)}
+		app.innerHTML=topbar('ages()','🏠 خانه')+`<h1>${A.e} ${A.t}</h1><p>یک دسته انتخاب کن</p><div class="g2">`+A.c.map((id,i)=>{const c=CM[id],lk=!P.premium&&i>=FREE;return `<button class="sticker cat" style="background:${c.c};color:#2a2347" onclick="${lk?'gate(paywall)':`games('${id}')`}"><b>${c.img?`<img src="${c.img}" alt="" loading="lazy">`:c.e}</b>${c.n}${lk?'<i>🔒</i>':''}</button>`}).join('')+'</div>';setTimeout(()=>playFoxyAudio('choose'),300)}
 function games(id){const c=CM[id];app.innerHTML=topbar('cats()','→ دسته‌ها')+`<div class="big">${c.img?`<img class="category-hero" src="${c.img}" alt="">`:c.e}</div><h1>${c.n}</h1>`+AG[P.age].g.map(g=>{const b=P.best[id+g]||0;return `<button class="sticker" onclick="start('${id}','${g}')">${GN[g][0]} ${GN[g][1]}<small>${'⭐'.repeat(b)||'هنوز بازی نشده'}</small></button>`}).join('')}
 	function start(cat,mode){stopFoxySpeech();R={cat,mode,i:0,s:0,f:0};if(mode==='match')return match();R.q=sh(CM[cat].w).slice(0,8);ask()}
 const opts=(it,n)=>sh([...sh(CM[R.cat].w.filter(x=>x!==it)).slice(0,n-1),it]);
-function head(){return topbar(`games('${R.cat}')`,'→ بازی‌ها')+`<div class="bar"><i style="width:${R.i/R.q.length*100}%"></i></div>`}
+function head(){return topbar(`games('${R.cat}')`,'← بازی‌ها')+`<div class="progress-label">مرحله ${R.i+1} از ${R.q.length}</div><div class="bar" aria-label="پیشرفت بازی"><i style="width:${R.i/R.q.length*100}%"></i></div>`}
 function ask(){if(R.i>=R.q.length)return fin(R.s/R.q.length>=.9?3:R.s/R.q.length>=.6?2:1);
 const it=R.q[R.i],m=R.mode;R.f=0;let o,h=head();
 if(m==='listen'){o=opts(it,3);app.innerHTML=h+`<p>گوش بده و تصویر درست را بزن</p><button class="say" id="sp">🔊 دوباره</button><div class="g3">${o.map((x,i)=>`<button class="opt emo" data-i="${i}">${art(x)}</button>`).join('')}</div>`;requestAnimationFrame(()=>say(it.w))}
