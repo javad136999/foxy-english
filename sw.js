@@ -1,4 +1,4 @@
-const V='fox-v11-story-controls';
+const V='fox-v12-conversations';
 const BASE=self.registration.scope;
 const A=[BASE,BASE+'index.html',BASE+'manifest.webmanifest',BASE+'icons/icon-192.png',BASE+'icons/icon-512.png',BASE+'assets/foxy-mascot-refined.webp',BASE+'assets/category-animals.webp',BASE+'assets/category-fruits.webp',BASE+'assets/category-food.webp',BASE+'assets/category-vehicles.webp',BASE+'assets/category-nature.webp',BASE+'assets/items/dog.webp',BASE+'assets/items/cat.webp',BASE+'assets/items/fish.webp',BASE+'assets/items/bird.webp',BASE+'assets/items/cow.webp',BASE+'assets/items/horse.webp',BASE+'assets/items/elephant.webp',BASE+'assets/items/monkey.webp',BASE+'assets/items/rabbit.webp',BASE+'assets/items/apple.webp',BASE+'assets/items/banana.webp',BASE+'assets/items/grapes.webp',BASE+'assets/items/orange.webp',BASE+'assets/items/watermelon.webp'];
 self.addEventListener('install',e=>e.waitUntil(caches.open(V).then(c=>c.addAll(A)).then(()=>self.skipWaiting())));
