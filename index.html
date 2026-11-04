@@ -212,6 +212,16 @@ const sh=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.r
 	let speechVoices=[];
 	function refreshSpeechVoices(){try{speechVoices=window.speechSynthesis.getVoices()||[]}catch(e){speechVoices=[]}return speechVoices}
 	if('speechSynthesis' in window)window.speechSynthesis.onvoiceschanged=refreshSpeechVoices;
+	function stopFoxySpeech(){
+		// هر صدای در حال پخش را قبل از ورود به صفحه بعدی یا شروع دوباره قطع کن.
+		say.ticket++;
+		if(foxAudio){try{foxAudio.pause();foxAudio.currentTime=0}catch(e){}foxAudio=null}
+		if('speechSynthesis' in window)try{window.speechSynthesis.cancel()}catch(e){}
+		const tts=window.FoxyTTS;
+		if(tts)try{if(typeof tts.stop==='function')tts.stop();else if(typeof tts.cancel==='function')tts.cancel()}catch(e){}
+		const wrap=document.getElementById('foxArtWrap');
+		if(wrap)wrap.classList.remove('talking');
+	}
 	function say(t){
  try{
   if(window.FoxyTTS&&typeof window.FoxyTTS.speak==='function'){window.FoxyTTS.speak(String(t));return true}
@@ -277,12 +287,11 @@ app.innerHTML=`<section class="welcome-card" aria-label="خوش‌آمدگویی
 <button class="welcome-cta" id="startBtn" type="button" onclick="beginAdventure()"><span>بزن بریم، فاکسی!</span><span aria-hidden="true">←</span></button>
 <p class="welcome-foot">فاکسی سلام می‌کند، دست تکان می‌دهد و با صدای فارسی با تو حرف می‌زند؛ اگر صدا فعال نشد، «دوباره گوش کن» را بزن.</p></section>`;
 welcomeTimer=setTimeout(()=>speakWelcome(),650)}
-function beginAdventure(){
- if(introBusy)return;
- introBusy=true;clearTimeout(welcomeFallback);clearTimeout(welcomeTimer);welcomeRun++;say.ticket++;
- if(foxAudio){foxAudio.pause();foxAudio.currentTime=0;foxAudio=null}
- if('speechSynthesis' in window)try{speechSynthesis.cancel()}catch(e){}
- playfulFox();introBusy=false;if(P.age)cats();else ages()
+	function beginAdventure(){
+	 if(introBusy)return;
+	 introBusy=true;clearTimeout(welcomeFallback);clearTimeout(welcomeTimer);welcomeRun++;
+	 stopFoxySpeech();
+	 playfulFox();introBusy=false;if(P.age)cats();else ages()
 }
 function ages(){document.body.dataset.age='';const D={a:['#ffe08a','شنیدن و انتخاب تصویر'],b:['#a8ecd9','دیدن و پیدا کردن کلمه'],c:['#cfc6ff','املا و معنی کلمه']};
 app.innerHTML=`<button class="pill" onclick="welcome()">← برگشت به فاکسی</button><div class="age-intro"><img class="age-fox" src="./assets/foxy-mascot-refined.webp" alt="فاکسی"><h1>چند سالته؟</h1><p>یک گروه سنی انتخاب کن تا بازی‌های مناسب خودت را پیدا کنم.</p></div>`+Object.keys(AG).map(k=>`<button class="sticker age" style="--c:${D[k][0]}" onclick="setAge('${k}')"><span class="ab">${AG[k].e}</span><span>${AG[k].t}<small>${D[k][1]}</small></span></button>`).join('')+`<button class="sticker story-entry" onclick="storyShelf()">📚 قصه‌های رایگان · ۵۰ داستان</button>`+`<p><a href="./privacy.html" onclick="event.preventDefault();gate(()=>location.href='./privacy.html')" style="color:inherit">حریم خصوصی (ویژه والدین)</a></p>`}
@@ -290,7 +299,7 @@ function setAge(k){P.age=k;save();cats()}
 	function cats(){if(!P.age)return ages();document.body.dataset.age=P.age;const A=AG[P.age];
 	app.innerHTML=topbar('ages()','🔁 سن')+`<h1>${A.e} ${A.t}</h1><p>یک دسته انتخاب کن</p><div class="g2">`+A.c.map((id,i)=>{const c=CM[id],lk=!P.premium&&i>=FREE;return `<button class="sticker cat" style="background:${c.c};color:#2a2347" onclick="${lk?'gate(paywall)':`games('${id}')`}"><b>${c.img?`<img src="${c.img}" alt="" loading="lazy">`:c.e}</b>${c.n}${lk?'<i>🔒</i>':''}</button>`}).join('')+'</div>';setTimeout(()=>playFoxyAudio('choose'),300)}
 function games(id){const c=CM[id];app.innerHTML=topbar('cats()','→ دسته‌ها')+`<div class="big">${c.img?`<img class="category-hero" src="${c.img}" alt="">`:c.e}</div><h1>${c.n}</h1>`+AG[P.age].g.map(g=>{const b=P.best[id+g]||0;return `<button class="sticker" onclick="start('${id}','${g}')">${GN[g][0]} ${GN[g][1]}<small>${'⭐'.repeat(b)||'هنوز بازی نشده'}</small></button>`}).join('')}
-function start(cat,mode){R={cat,mode,i:0,s:0,f:0};if(mode==='match')return match();R.q=sh(CM[cat].w).slice(0,8);ask()}
+	function start(cat,mode){stopFoxySpeech();R={cat,mode,i:0,s:0,f:0};if(mode==='match')return match();R.q=sh(CM[cat].w).slice(0,8);ask()}
 const opts=(it,n)=>sh([...sh(CM[R.cat].w.filter(x=>x!==it)).slice(0,n-1),it]);
 function head(){return topbar(`games('${R.cat}')`,'→ بازی‌ها')+`<div class="bar"><i style="width:${R.i/R.q.length*100}%"></i></div>`}
 function ask(){if(R.i>=R.q.length)return fin(R.s/R.q.length>=.9?3:R.s/R.q.length>=.6?2:1);
