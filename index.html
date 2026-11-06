@@ -314,7 +314,7 @@ welcomeTimer=setTimeout(()=>speakWelcome(),650)}
 	 if(introBusy)return;
 	 introBusy=true;clearTimeout(welcomeFallback);clearTimeout(welcomeTimer);welcomeRun++;
 	 stopFoxySpeech();
-	 playfulFox();introBusy=false;if(P.age)cats();else ages()
+	 playfulFox();introBusy=false;ages()
 }
 function ages(){document.body.dataset.age='';const D={a:['#ffe08a','بازی‌های ساده و شنیدنی'],b:['#a8ecd9','بازی‌های پیدا کردن کلمه'],c:['#cfc6ff','بازی‌های املا و معنی']};
 app.innerHTML=`<button class="pill" onclick="welcome()">← برگشت به فاکسی</button><div class="age-intro"><img class="age-fox" src="./assets/foxy-mascot-refined.webp" alt="فاکسی"><h1>چند سالته؟</h1><p>یک گروه سنی انتخاب کن تا بازی‌های مناسب خودت را پیدا کنم.</p></div>`+Object.keys(AG).map(k=>`<button class="sticker age" style="--c:${D[k][0]}" onclick="setAge('${k}')"><span class="ab">${AG[k].e}</span><span>${AG[k].t}<small>${D[k][1]}</small></span></button>`).join('')+`<button class="sticker story-entry" onclick="storyShelf()">📚 قصه‌های رایگان · ۵۰ داستان</button>`+`<p><a href="./privacy.html" onclick="event.preventDefault();gate(()=>location.href='./privacy.html')" style="color:inherit">حریم خصوصی (ویژه والدین)</a></p>`}
